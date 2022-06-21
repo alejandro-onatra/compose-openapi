@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  swagger-ui:
+    image: "redis:alpine"
+    ports:
+      -
