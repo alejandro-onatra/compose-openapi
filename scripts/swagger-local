@@ -1,0 +1,71 @@
+source ./scripts/commons/parse-variables.sh
+
+# Get the users request
+function showDetails() {
+  echo " usage: $(basename $0) [start|stop|ps] [--team team_name] [--project project_name] [--service service_name] [--environment environment] [--manual] [--help]
+  ----- Optional Options -----
+  --env-file         -e     Environment file name, it should be in the root of the project (ex: myenviron.env).
+  --spec-file        -s     Specification filename  (ex: myspecs.yml).
+  --server-path      -p     Server path where i want to serve this spec  (ex: myteamspec).
+  --local-spec-path  -l     The path where locally the spec is located (absolute) (ie. /User/Documents).
+  ----- Other Options -----
+  --help             -h     Show command help
+  "
+}
+
+operation=''
+if [ "${1}" = "start" ] || [ "${1}" = "stop" ] || [ "${1}" = "ps" ]; then
+  operation=${1}
+  shift
+else
+  echo "The action ${1} is not valid"
+  showDetails
+fi
+
+while [ $# -gt 0 ]; do
+  option=${1}
+  shift
+  case ${option} in
+    --env-file|-e) export ENV_FILE_NAME=${1}; shift;;
+    --spec-file |-s) export SPEC_FILE_NAME=${1}; shift;;
+    --server-path|-p) export BASE_URL=${1}; shift;;
+    --local-spec-path|-l) export LOCAL_VOLUME_PATH=${1}; shift;;
+    --local-port|-l) export LOCAL_PORT=${1}; shift;;
+    --help|-h) showDetails; exit;;
+    *) echo "Error: Unknown option [${option}]" && showDetails && exit 1;;
+  esac 
+done
+
+# Load Variables, ans set up server
+project_root="$(pwd)"
+
+# Start the service
+if [ -z "${env_file_name}" ]; then
+    echo "No environment file name was found, using the default variables.env value"
+    export ENV_FILE_NAME="variables.env"
+fi
+
+loadVariables "${project_root}" "${ENV_FILE_NAME}"
+
+# Stop the service
+if [ "${operation}" = "stop" ]; then
+  echo "Shutting down the service swagger-ui on http://localhost:${LOCAL_PORT}/${BASE_URL} using the file [${LOCAL_VOLUME_PATH}/${SPEC_FILE_NAME}]"
+  docker-compose down
+  exit 0
+fi
+
+# Start the service
+if [ "${operation}" = "start" ]; then
+  echo "Starting the service swagger-ui on http://localhost:${LOCAL_PORT}/${BASE_URL} using the file [${LOCAL_VOLUME_PATH}/${SPEC_FILE_NAME}]"
+  docker-compose up &
+  sleep 2 # To allow the server to load the file correctly before opening the browser
+  open http://localhost:${LOCAL_PORT}/${BASE_URL} &
+  exit 0
+fi
+
+# Start the service
+if [ "${operation}" = "ps" ]; then
+  echo "Listing the swagger-ui-local services"
+  docker-compose ps
+  exit 0
+fi
