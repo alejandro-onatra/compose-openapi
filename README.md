@@ -2,7 +2,7 @@
 This is a useful way to actually start the Open APi server with some Swagg!!
 
 #### Disclaimer
-<sub>Only MAC OSX and Linux based operating systems supported</sub>
+<sup>Only MAC OSX and Linux based operating systems supported</sup>
 
 ## Configuration
 
