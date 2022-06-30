@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source ./scripts/commons/parse-variables.sh
 
 # Get the users request
@@ -13,7 +15,7 @@ function showDetails() {
   "
 }
 
-operation=''
+operation=""
 if [ "${1}" = "start" ] || [ "${1}" = "stop" ] || [ "${1}" = "ps" ]; then
   operation=${1}
   shift
@@ -47,25 +49,37 @@ fi
 
 loadVariables "${project_root}" "${ENV_FILE_NAME}"
 
+# Set command base on the OS
+if [ "${OSTYPE}" = "linux-gnu" ]; then
+  echo "You are using Linux based OS"
+  docker_command="docker compose"
+elif [ "${OSTYPE}" = "darwin" ]; then
+  echo "You are using MAC OS"
+  docker_command="docker-compose"
+else
+  echo "USO (Unknown Operating System), your OS is not supported"
+  exit 1
+fi
+
 # Stop the service
 if [ "${operation}" = "stop" ]; then
-  echo "Shutting down the service swagger-ui on http://localhost:${LOCAL_PORT}/${BASE_URL} using the file [${LOCAL_VOLUME_PATH}/${SPEC_FILE_NAME}]"
-  docker-compose down
+  echo "Shutting down the service swagger-ui on http://localhost:${LOCAL_PORT}${BASE_URL} using the file [${LOCAL_VOLUME_PATH}/${SPEC_FILE_NAME}]"
+  ${docker_command} stop
   exit 0
 fi
 
 # Start the service
 if [ "${operation}" = "start" ]; then
-  echo "Starting the service swagger-ui on http://localhost:${LOCAL_PORT}/${BASE_URL} using the file [${LOCAL_VOLUME_PATH}/${SPEC_FILE_NAME}]"
-  docker-compose up &
+  echo "Starting the service swagger-ui on http://localhost:${LOCAL_PORT}${BASE_URL} using the file [${LOCAL_VOLUME_PATH}/${SPEC_FILE_NAME}]"
+  ${docker_command} up &
   sleep 2 # To allow the server to load the file correctly before opening the browser
-  open http://localhost:${LOCAL_PORT}/${BASE_URL} &
+  open http://localhost:${LOCAL_PORT}${BASE_URL} &
   exit 0
 fi
 
 # Start the service
 if [ "${operation}" = "ps" ]; then
   echo "Listing the swagger-ui-local services"
-  docker-compose ps
+  ${docker_command} ps
   exit 0
 fi
