@@ -53,7 +53,7 @@ loadVariables "${project_root}" "${ENV_FILE_NAME}"
 if [ "${OSTYPE}" = "linux-gnu" ]; then
   echo "You are using Linux based OS"
   docker_command="docker compose"
-elif [ "${OSTYPE}" = "darwin" ]; then
+elif [[ "${OSTYPE}" == "darwin"* ]]; then
   echo "You are using MAC OS"
   docker_command="docker-compose"
 else
