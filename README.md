@@ -1,5 +1,5 @@
 # Swagger Service with Docker Compose
-This is a useful way to actually start the Open APi server with some Swagg!!
+This is a useful way to actually start the Open API server with some Swagg!!
 
 #### Disclaimer
 <sup>Only MAC OSX and Linux based operating systems supported</sup>
