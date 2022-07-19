@@ -29,14 +29,30 @@ Bear in mind that the order in which the script will look for configurations are
 - Default name environment file (```variables.env```)
 
 ## Usage
-You can use the command with the ```start``` and ```stop``` options to either initialize the service or stop it. To list the services you can use the ```ps``` option Its quite straightforward. The start command will open a window when the 
+You can use the command with the ```start``` and ```stop``` options to either initialize the service or stop it. To list
+the services you can use the ```ps``` option Its quite straightforward. The start command will open a window when in your 
+default browser as soon as everything is up and running (you may need to refresh once in case the file is not totally loaded)
+
+When you want to spin up several servers at the same time please bear in mind to use different ```.env``` files adding 
+the ```COMPOSE_PROJECT_NAME``` variable with different values for each one of them.
+
+Other route to achieve this is to point to a folder with different specs spinning just one server but that is another type 
+of solution.
 
 ### Usage Example
+
+Simple start server with default env file
 ```shell
 scripts/swagger-local start 
 ```
+
+Start specifying the environment variable (bear in mind that the .env file must be in the folder where you call the script)
+```shell
+scripts/swagger-local start -e myenvironment.env
+```
 the following is an example environment file 
 ```yaml
+COMPOSE_PROJECT_NAME=swagger-app
 SWAGGER_JSON=/api-specs/swagger-file.yml
 BASE_URL=/swagger
 CONTAINER_VOLUME_PATH=/api-specs

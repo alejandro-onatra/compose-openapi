@@ -42,7 +42,7 @@ done
 project_root="$(pwd)"
 
 # Start the service
-if [ -z "${env_file_name}" ]; then
+if [ -z "${ENV_FILE_NAME}" ]; then
     echo "No environment file name was found, using the default variables.env value"
     export ENV_FILE_NAME="variables.env"
 fi
